@@ -273,8 +273,10 @@ class Explorer:
         """Returns RGB vga buffer view."""
         arr = self._get_array("vga_buffer", np.uint8)
         if arr is None: return None
-        return arr.reshape(self.exports["wasm_vga_height"](self.store), 
-                           self.exports["wasm_vga_width"](self.store), 3)
+        stride = self.exports["wasm_vga_stride"](self.store) if "wasm_vga_stride" in self.exports else 1440
+        width = self.exports["wasm_vga_width"](self.store)
+        height = self.exports["wasm_vga_height"](self.store)
+        return arr.reshape(-1, stride, 3)[:height, :width]
 
 
     @property

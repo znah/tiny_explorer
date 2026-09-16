@@ -51,7 +51,10 @@ struct VGASimulator {
         }
         if (in_pins[1] != -1) circuit.set_signal(in_pins[1], 0);
         if (in_pins[4] != -1) circuit.set_signal(in_pins[4], 0);
-        circuit.set_signal(rst_n, 1);
+        circuit.set_signal(clk, 0); circuit.settle(200);
+        circuit.set_signal(rst_n, 1); circuit.settle(200);
+        ray_x = 0; ray_y = 0;
+        last_hsync = false; last_vsync = false;
     }
 
     bool isValid() const { return clk != -1 && rst_n != -1; }
@@ -112,7 +115,7 @@ struct VGASimulator {
             ray_x = 0; ray_y++; 
         }
         if (!last_vsync && vsync) { 
-            height = std::min(std::max(ray_x, height), max_height); 
+            height = std::min(std::max(ray_y, height), max_height); 
             ray_y = 0;
         }
 
